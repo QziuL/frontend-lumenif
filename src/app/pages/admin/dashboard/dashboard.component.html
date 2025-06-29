@@ -1,0 +1,37 @@
+<div class="p-4 sm:p-4 lg:px-6 py-4">
+  <header class="mb-6">
+    <h1 class="text-3xl font-bold text-gray-800">Painel do Administrador</h1>
+    <p class="text-gray-500 mt-1">Visão geral e gerenciamento do sistema LumenIF.</p>
+  </header>
+
+  <div class="grid">
+    <div class="col-12 md:col-6 lg:col-4">
+      <p-card header="Total de Usuários">
+        <div class="flex align-items-center">
+          <i class="pi pi-users text-blue-500 text-3xl mr-4"></i>
+          <span class="text-2xl font-bold text-gray-800">123</span>
+        </div>
+      </p-card>
+    </div>
+
+    <div class="col-12 md:col-6 lg:col-4">
+      <p-card header="Cursos Publicados">
+        <div class="flex align-items-center">
+          <i class="pi pi-book text-green-500 text-3xl mr-4"></i>
+          <span class="text-2xl font-bold text-gray-800">42</span>
+        </div>
+      </p-card>
+    </div>
+
+    <div class="col-12 md:col-6 lg:col-4">
+      <p-card header="Cursos para Aprovação">
+        <div class="flex align-items-center">
+          <i class="pi pi-inbox text-yellow-500 text-3xl mr-4"></i>
+          <span class="text-2xl font-bold text-gray-800">5</span>
+        </div>
+      </p-card>
+    </div>
+  </div>
+
+  <app-user-list></app-user-list>
+</div>
