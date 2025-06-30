@@ -1,0 +1,54 @@
+<div class="flex align-items-center
+justify-content-center
+min-h-screen min-w-screen
+overflow-hidden
+font-bold">
+
+  <p-card
+    header="LumenIF"
+    subheader="Bem-vindo(a) de volta!"
+    styleClass="w-full max-w-25rem shadow-2">
+
+    <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+
+      <div class="field mt-3">
+        <p-float-label>
+          <input pInputText id="email" formControlName="email" class="w-full" />
+          <label for="email">Email</label>
+        </p-float-label>
+      </div>
+
+      <div class="field mt-5">
+        <p-float-label>
+          <input pInputText id="password" type="password" formControlName="password" class="w-full" />
+          <label for="password">Senha</label>
+        </p-float-label>
+      </div>
+
+      <p-button
+        label="Entrar"
+        type="submit"
+        [disabled]="loginForm.invalid"
+        styleClass="w-full mt-5"
+        icon="pi pi-sign-in"
+        iconPos="right"
+        severity="primary"
+        raised="true"/>
+    </form>
+
+    @if (errorMessage) {
+      <p-message
+        [text]="errorMessage"
+        severity="error"
+        styleClass="mt-4 flex"
+      />
+    }
+
+    <div class="text-center mt-4">
+      <a routerLink="/register" class="text-primary-600 hover:underline">
+        Não tem uma conta?
+      </a>
+    </div>
+
+  </p-card>
+</div>
