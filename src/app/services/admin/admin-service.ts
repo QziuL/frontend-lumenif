@@ -11,8 +11,25 @@ export class AdminService {
 
   constructor(private http: HttpClient) { }
 
-  // Metodo para buscar uma lista de usuários
+  // Método para buscar usuários
   getAllUsers(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/users`);
+  }
+
+  // Método para buscar roles
+  getRoles(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/roles`);
+  }
+
+  createUser(userData: any): Observable<any> {
+    return this.http.post<any>(`${this.apiUrl}/users`, userData);
+  }
+
+  updateUser(id: string, userData: any): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/users/${id}`, userData);
+  }
+
+  deleteUser(id: string): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/users/${id}`);
   }
 }

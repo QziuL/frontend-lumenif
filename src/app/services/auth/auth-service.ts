@@ -16,7 +16,12 @@ export class AuthService {
   constructor(private http: HttpClient) { }
 
   register(userData: any): Observable<AuthResponseInterface> {
-    return this.http.post<AuthResponseInterface>(`${this.apiUrl}/register`, userData);
+    return this.http.post<AuthResponseInterface>(`${this.apiUrl}/register`, userData).pipe(
+      tap(res => {
+        this.saveToken(res.access_token);
+        this.saveUser(res.user);
+      })
+    );
   }
 
   login(userData: any): Observable<AuthResponseInterface> {
@@ -28,14 +33,17 @@ export class AuthService {
     );
   }
 
-  logout(): Observable<any> {
-    return this.http.post(`${this.apiUrl}/logout`, {}).pipe(
-      tap(() => {
-        // Limpa tudo ao fazer logout
-        this.removeToken();
-        this.removeUser();
-      })
-    );
+  logout(): void {
+    // return this.http.post(`${this.apiUrl}/logout`, {}).pipe(
+    //   tap(() => {
+    //     // Limpa tudo ao fazer logout
+    //     this.removeToken();
+    //     this.removeUser();
+    //   })
+    // );
+    this.removeToken();
+    this.removeUser();
+    console.log('removido tokens e user', this.getToken(), this.getCurrentUser());
   }
 
   saveUser(user: UserInterface): void {
@@ -53,6 +61,7 @@ export class AuthService {
 
   getCurrentUser(): UserInterface | null {
     const userJson = localStorage.getItem(this.USER_KEY);
+    // console.log(userJson);
     if (!userJson) {
       return null;
     }
@@ -64,7 +73,7 @@ export class AuthService {
     localStorage.removeItem('auth_token');
   }
 
-  private removeUser(): void {
+  removeUser(): void {
     localStorage.removeItem(this.USER_KEY);
   }
 
