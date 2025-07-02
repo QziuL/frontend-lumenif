@@ -6,6 +6,7 @@ export const authGuard: CanActivateFn = (
   route: ActivatedRouteSnapshot,
   state: RouterStateSnapshot
 ) => {
+  // console.log('auth guard', route);
   const authService = inject(AuthService);
   const router = inject(Router);
 
@@ -21,8 +22,8 @@ export const authGuard: CanActivateFn = (
   const returnUrl = state.url;
 
   // Redireciona para a página de login, passando a returnUrl como um query parameter
-  router.navigate(['/login'], { queryParams: { returnUrl: returnUrl } });
+  router.navigate(['/login'], {queryParams: {returnUrl: returnUrl}});
 
-  return false; // Não, não pode acessar a rota
+   return false; // Não, não pode acessar a rota
 };
 
