@@ -1,12 +1,12 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnInit, Output} from '@angular/core';
 import {AdminService} from '../../../services/admin/admin-service';
 import {UserInterface} from '../../../interfaces/user-interface';
 import {ButtonModule} from 'primeng/button';
 import { TableModule } from 'primeng/table';
-import {Ripple} from 'primeng/ripple';
-import {WindowMaximizeIcon} from 'primeng/icons';
 import {Tag} from 'primeng/tag';
 import {Tooltip} from 'primeng/tooltip';
+import {DeleteUserComponent} from '../modals/delete-user/delete-user.component';
+import {UserFormComponent} from '../modals/user-form/user-form.component';
 
 
 export interface User {
@@ -22,32 +22,25 @@ export interface User {
   imports: [
     ButtonModule,
     TableModule,
-    Ripple,
-    WindowMaximizeIcon,
     Tag,
     Tooltip,
+    DeleteUserComponent,
+    UserFormComponent,
   ],
   templateUrl: './user-list.html',
   styleUrl: './user-list.css'
 })
 export class UserList implements OnInit {
+  @Output() totalUsers: EventEmitter<number> = new EventEmitter<number>();
+
   users: UserInterface[] = [];
+  selectedUserForEdit: UserInterface | null = null;
+  userIdForDelete = '';
+
   isLoading = true;
   errorMessage: string | null = null;
-
-  // Mock de usuarios para testes
-  mockUsers: UserInterface[] = [
-    { public_id: '82723', name: 'Admin LumenIF', email: 'admin@lumenif.com', roles: [{id: 1, name: 'ADMIN'}] },
-    { public_id: '82724', name: 'Criador Exemplo', email: 'criador@lumenif.com', roles: [{id: 2, name: 'CRIADOR'}] },
-    { public_id: '82725', name: 'Ana Silva', email: 'ana.silva@email.com', roles: [{id: 3, name: 'ALUNO'}] },
-    { public_id: '82726', name: 'Bruno Costa', email: 'bruno.costa@email.com', roles: [{id: 3, name: 'ALUNO'}] },
-    { public_id: '82727', name: 'Carla Dias', email: 'carla.dias@email.com', roles: [{id: 3, name: 'ALUNO'}]},
-    { public_id: '82728', name: 'Carla Meses', email: 'carla.meses@email.com', roles: [{id: 3, name: 'ALUNO'}]},
-    { public_id: '82729', name: 'Carla Anos', email: 'carla.anos@email.com', roles: [{id: 3, name: 'ALUNO'}]},
-    { public_id: '82730', name: 'Carla Décadas', email: 'carla.decadas@email.com', roles: [{id: 3, name: 'ALUNO'}]},
-    { public_id: '82731', name: 'Carla Séculos', email: 'carla.seculos@email.com', roles: [{id: 3, name: 'ALUNO'}]},
-    { public_id: '82732', name: 'Carla Milênios', email: 'carla.milenios@email.com', roles: [{id: 3, name: 'ALUNO'}]},
-  ];
+  displayUserModal = false;
+  displayDeleteUserModal = false;
 
   constructor(private adminService: AdminService) {}
 
@@ -61,6 +54,7 @@ export class UserList implements OnInit {
       next: (response) => {
         this.users = response.data; // A resposta do paginate() do Laravel vem em 'data'
         this.isLoading = false;
+        this.totalUsers.emit(this.users.length);
       },
       error: (err) => {
         this.errorMessage = 'Não foi possível carregar a lista de usuários.';
@@ -68,11 +62,6 @@ export class UserList implements OnInit {
         console.error(err);
       }
     });
-  }
-
-  // Função para formatar os papéis em uma string simples
-  formatRoles(roles: { nome: string }[]): string {
-    return roles.map(role => role.nome).join(', ');
   }
 
   // Função auxiliar para definir a cor da Tag baseada no papel
@@ -89,23 +78,74 @@ export class UserList implements OnInit {
     }
   }
 
-  // Métodos de placeholder para as ações de CRUD
-  editUser(id: number): void {
-    console.log(`Admin quer editar o usuário com ID: ${id}`);
-    // Futuramente, aqui você navegaria para a página de edição de usuário
+  // Abre o modal para cadastrar novo usuário
+  showCreateUserModal(): void {
+    this.selectedUserForEdit = null;
+    this.displayUserModal = true;
   }
 
-  deleteUser(id: number): void {
-    console.log(`Admin quer excluir o usuário com ID: ${id}`);
-    // Futuramente, aqui você abriria um modal de confirmação
+  showEditUserModal(user: UserInterface): void {
+    this.selectedUserForEdit = user;
+    this.displayUserModal = true;
+  }
+
+  showDeleteUserModal(id: string): void {
+    this.userIdForDelete = id;
+    this.displayDeleteUserModal = true;
+  }
+
+  // Esconde o modal (chamado pelo evento do filho)
+  hideUserModal(): void {
+    this.selectedUserForEdit = null;
+    this.displayUserModal = false;
+  }
+
+  hideDeleteUserModal(): void {
+    this.displayDeleteUserModal = false;
+  }
+
+  // Processa o salvamento (chamado pelo evento do filho)
+  handleUser(userData: UserInterface): void {
+    if(userData.public_id) {
+      console.log('Editando usuário!', userData);
+      this.adminService.updateUser(userData.public_id, userData).subscribe({
+        next: () => { this.loadUsers(); },
+        error: (err) => { console.log('Erro ao editar usuário.', err) },
+      });
+    }else {
+      console.log('Criando usuário!');
+      this.adminService.createUser(userData).subscribe({
+        next: () => { this.loadUsers(); },
+        error: (err) => console.error('Erro ao criar usuário', err)
+      });
+    }
+    this.hideUserModal();
+  }
+
+  deleteUser():void {
+    this.adminService.deleteUser(this.userIdForDelete).subscribe({
+      next: () => {
+        console.log('Usuário deletado com sucesso!');
+        this.hideDeleteUserModal();
+        this.loadUsers();
+      },
+      error: (err) => console.log('Erro ao deletar usuário', err)
+    });
+
+    this.hideDeleteUserModal();
   }
 
   // BUTTON DARK MODE
-  toggleDarkMode() {
-    const element = document.querySelector('html');
-    if(element) {
-      element.classList.toggle('my-app-dark');
-    }
-  }
+  // toggleDarkMode() {
+  //   const element = document.querySelector('html');
+  //   if(element) {
+  //     element.classList.toggle('my-app-dark');
+  //   }
+  // }
+
+  // Função para formatar os papéis em uma string simples
+  // formatRoles(roles: { nome: string }[]): string {
+  //   return roles.map(role => role.nome).join(', ');
+  // }
 
 }

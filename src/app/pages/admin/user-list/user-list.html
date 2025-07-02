@@ -10,7 +10,7 @@
   <ng-template pTemplate="caption">
     <div class="flex justify-content-between align-items-center">
       <h2 class="text-xl font-bold text-gray-800">Gerenciamento de Usuários</h2>
-      <p-button label="Criar Novo Usuário" icon="pi pi-plus" />
+      <p-button label="Criar Novo Usuário" icon="pi pi-plus" (click)="showCreateUserModal()" />
     </div>
   </ng-template>
 
@@ -40,8 +40,18 @@
       </td>
       <td>
         <div class="flex gap-2">
-          <p-button icon="pi pi-pencil" styleClass="p-button-text p-button-rounded" (click)="editUser(user.public_id)" pTooltip="Editar Usuário" tooltipPosition="top" />
-          <p-button icon="pi pi-trash" styleClass="p-button-text p-button-rounded p-button-danger" (click)="deleteUser(user.public_id)" pTooltip="Excluir Usuário" tooltipPosition="top" />
+          <p-button icon="pi pi-pencil"
+                    styleClass="p-button-text p-button-rounded"
+                    (click)="showEditUserModal(user)"
+                    pTooltip="Editar Usuário"
+                    tooltipPosition="top"
+          />
+          <p-button icon="pi pi-trash"
+                    styleClass="p-button-text p-button-rounded p-button-danger"
+                    (click)="showDeleteUserModal(user.public_id)"
+                    pTooltip="Excluir Usuário"
+                    tooltipPosition="top"
+          />
         </div>
       </td>
     </tr>
@@ -54,29 +64,22 @@
   </ng-template>
 </p-table>
 
-<!--<div>-->
-<!--  <div style="margin-top: 2em;">-->
-<!--    <p-button icon="pi pi-moon" (onClick)="toggleDarkMode()"/>-->
-<!--    <h1 style="text-align: center">Lista de Usuários</h1>-->
-<!--  </div>-->
-<!--  <p-table [value]="users"-->
-<!--           [tableStyle]="{ 'min-width': '50rem' }"-->
-<!--           [paginator]="true"-->
-<!--           [rows]="5"-->
-<!--           [rowsPerPageOptions]="[5, 10, 20]"  >-->
-<!--    <ng-template #header>-->
-<!--      <tr>-->
-<!--        <th>Code</th>-->
-<!--        <th>Name</th>-->
-<!--        <th>Email</th>-->
-<!--      </tr>-->
-<!--    </ng-template>-->
-<!--    <ng-template #body let-user>-->
-<!--      <tr>-->
-<!--        <td>{{ user.public_id }}</td>-->
-<!--        <td>{{ user.name }}</td>-->
-<!--        <td>{{ user.email }}</td>-->
-<!--      </tr>-->
-<!--    </ng-template>-->
-<!--  </p-table>-->
-<!--</div>-->
+<app-delete-user
+  [idUser]="userIdForDelete"
+  [displayModal]="displayDeleteUserModal"
+  (onHideModal)="hideDeleteUserModal()"
+  (onDeleteUser)="deleteUser()"
+/>
+
+<app-user-form
+  [displayModal]="displayUserModal"
+  [userToEdit]="selectedUserForEdit"
+  (onHideModal)="hideUserModal()"
+  (onSaveUser)="handleUser($event)">
+/>
+
+<!--<app-create-user-form-->
+<!--  [displayModal]="displayCreateUserModal"-->
+<!--  (onHideModal)="hideCreateUserModal()"-->
+<!--  (onSaveUser)="saveNewUser($event)"-->
+<!--/>-->
