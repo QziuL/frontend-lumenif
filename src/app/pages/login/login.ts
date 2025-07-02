@@ -12,8 +12,7 @@ import { MessageModule } from 'primeng/message';
   selector: 'app-login',
   imports: [
     ReactiveFormsModule,
-    RouterLink, // Adicione para o routerLink funcionar
-    // Adicione os módulos PrimeNG aqui
+    RouterLink,
     CardModule,
     InputTextModule,
     ButtonModule,

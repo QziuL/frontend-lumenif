@@ -1,0 +1,13 @@
+<p-dialog header="Tem certeza que deseja deletar?" [(visible)]="displayModal" [modal]="true" [style]="{ width: '450px' }" (onHide)="hideDialog()">
+
+  <div class="p-fluid">
+    <h1></h1>
+    <h4>Usuário: {{ idUser }}</h4>
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Cancelar" icon="pi pi-times" styleClass="p-button-text" (click)="hideDialog()" />
+    <p-button label="Deletar" icon="pi pi-check" (click)="deleteUser()" />
+  </ng-template>
+
+</p-dialog>

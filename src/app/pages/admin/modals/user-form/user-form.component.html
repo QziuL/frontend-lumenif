@@ -1,0 +1,47 @@
+<p-dialog
+  [header]="isEditMode ? 'Editar Usuário' : 'Criar Novo Usuário'"
+  [(visible)]="displayModal"
+  [modal]="true"
+  [style]="{ width: '450px' }"
+  (onHide)="hideDialog()">
+
+  <form [formGroup]="userForm" (ngSubmit)="saveUser()">
+    <div class="p-fluid">
+      <div class="field flex flex-column gap-2">
+        <label for="name">Nome Completo</label>
+        <input pInputText id="name" formControlName="name" />
+      </div>
+
+      <div class="field flex flex-column gap-2 mt-3">
+        <label for="email">Email</label>
+        <input pInputText id="email" type="email" formControlName="email" />
+      </div>
+
+      @if (!isEditMode) {
+        <div class="field flex flex-column gap-2 mt-3">
+          <label for="password">Senha</label>
+          <p-password inputId="password" formControlName="password" [toggleMask]="true" [feedback]="false" />
+        </div>
+      }
+
+      <div class="field flex flex-column gap-2 mt-3">
+        <label for="role">Papel do Usuário</label>
+        <p-select
+          inputId="role"
+          [options]="roles"
+          formControlName="role_id"
+          placeholder="Selecione um papel"
+          optionLabel="name"
+          optionValue="id"
+          [appendTo]="'body'" />
+      </div>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Cancelar" icon="pi pi-times" styleClass="p-button-text" (click)="hideDialog()" />
+    <p-button [label]="isEditMode ? 'Salvar Alterações' : 'Criar Usuário'" icon="pi pi-check"
+              [disabled]="userForm.invalid" (click)="saveUser()" />
+  </ng-template>
+
+</p-dialog>
