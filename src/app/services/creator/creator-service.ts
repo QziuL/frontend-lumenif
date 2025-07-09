@@ -18,4 +18,12 @@ export class CreatorService {
   createCourse(courseData: any): Observable<any> {
     return this.http.post<any>(`${this.apiUrl}/courses`, courseData);
   }
+
+  getCourseStatusStats(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/stats/course-status`);
+  }
+
+  getTopCoursesStats(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/stats/top-courses`);
+  }
 }
