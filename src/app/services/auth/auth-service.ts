@@ -33,17 +33,18 @@ export class AuthService {
     );
   }
 
-  logout(): void {
-    // return this.http.post(`${this.apiUrl}/logout`, {}).pipe(
-    //   tap(() => {
-    //     // Limpa tudo ao fazer logout
-    //     this.removeToken();
-    //     this.removeUser();
-    //   })
-    // );
-    this.removeToken();
-    this.removeUser();
-    console.log('removido tokens e user', this.getToken(), this.getCurrentUser());
+  logout() {
+    return this.http.post(`${this.apiUrl}/logout`, {}).pipe(
+      tap(() => {
+        // Limpa tudo ao fazer logout
+        this.removeToken();
+        this.removeUser();
+        console.log('Removido TOKEN e USER');
+      })
+    );
+    // this.removeToken();
+    // this.removeUser();
+    // console.log('removido tokens e user', this.getToken(), this.getCurrentUser());
   }
 
   saveUser(user: UserInterface): void {
