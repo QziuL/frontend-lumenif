@@ -9,11 +9,6 @@ export const adminGuard: CanActivateFn = (route, state) => {
   const currentUser = authService.getCurrentUser();
 
   if (currentUser) {
-    // const rolesArray = Array.isArray(currentUser.roles) ? currentUser.roles : Object.values(currentUser.roles);
-
-    // const rolesRaw = currentUser.roles;
-
-    // console.log('É admin? ', currentUser.roles.some(role => role.name === 'ADMIN'));
     if (currentUser.roles.some(role => role.name === 'ADMIN')) {
       return true; // Se está logado E tem o papel 'ADMIN', permite o acesso.
     }
