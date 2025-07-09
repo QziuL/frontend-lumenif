@@ -14,13 +14,9 @@ import {Select} from 'primeng/select';
   imports: [
     Button,
     Dialog,
-    FloatLabel,
     FormsModule,
-    InputText,
-    Password,
     PrimeTemplate,
     ReactiveFormsModule,
-    Select
   ],
   templateUrl: './delete-user.component.html',
   styleUrl: './delete-user.component.css'
