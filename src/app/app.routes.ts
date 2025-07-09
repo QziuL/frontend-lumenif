@@ -1,12 +1,14 @@
 import { Routes } from '@angular/router';
 import {Login} from './pages/login/login';
 import {App} from './app';
-import {authGuard} from './auth/auth/auth-guard';
+import {authGuard} from './guards/auth/auth-guard';
 import {UserList} from './pages/admin/user-list/user-list';
-import {DashboardComponent} from './pages/admin/dashboard/dashboard.component';
-import {adminGuard} from './auth/admin/admin-guard';
+import {AdminDashboardComponent} from './pages/admin/dashboard/dashboard.component';
+import {CreatorDashboardComponent} from './pages/creator/dashboard/dashboard.component';
+import {adminGuard} from './guards/admin/admin-guard';
 import {RegisterComponent} from './pages/register/register.component';
 import {HomeComponent} from './pages/home/home.component';
+import {creatorGuard} from './guards/creator/creator.guard';
 
 export const routes: Routes = [
   // Rotas protegida
@@ -23,8 +25,13 @@ export const routes: Routes = [
   },
   {
     path: 'admin/dashboard',
-    component: DashboardComponent,
+    component: AdminDashboardComponent,
     canActivate: [authGuard, adminGuard]
+  },
+  {
+    path: 'creator/dashboard',
+    component: CreatorDashboardComponent,
+    canActivate: [authGuard, creatorGuard]
   },
 
   // Rotas públicas

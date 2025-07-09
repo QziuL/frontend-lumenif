@@ -1,0 +1,110 @@
+<div class="px-4 py-2 sm:px-6 py-3 lg:px-8 py-4 min-h-screen">
+  <div class="max-w-7xl mx-auto">
+
+    <header class="mb-8">
+      <h1 class="text-3xl font-bold text-black">Meu Painel de Criador</h1>
+      <p class="text-color-secondary mt-1">Gerencie seus cursos e acompanhe seu progresso.</p>
+      <p-button icon="pi pi-moon" label="Toggle Dark Mode" (onClick)="toggleDarkMode()"/>
+    </header>
+
+    <div class="grid">
+      <div class="col-12 md:col-6 lg:col-4">
+        <p-card header="Meus Cursos">
+          <div class="flex align-items-center">
+            <i class="pi pi-book text-blue-500 text-3xl mr-4"></i>
+            <span class="text-2xl font-bold">{{ courses.length }}</span>
+          </div>
+        </p-card>
+      </div>
+      <div class="col-12 md:col-6 lg:col-4">
+        <p-card header="Total de Alunos">
+          <div class="flex align-items-center">
+            <i class="pi pi-users text-green-500 text-3xl mr-4"></i>
+            <span class="text-2xl font-bold">256</span>
+          </div>
+        </p-card>
+      </div>
+      <div class="col-12 md:col-6 lg:col-4">
+        <p-card header="Avaliação Média">
+          <div class="flex align-items-center">
+            <i class="pi pi-star-fill text-yellow-500 text-3xl mr-4"></i>
+            <span class="text-2xl font-bold">4.8</span>
+          </div>
+        </p-card>
+      </div>
+    </div>
+
+
+
+    <div class="px-4 py-6">
+      <div class="max-w-7xl mx-auto">
+        <div class="grid">
+        </div>
+
+        <div class="grid mt-6">
+          <div class="col-12 lg:col-6">
+            <p-card>
+              <ng-template pTemplate="title">
+                <div class="font-bold text-xl">Status dos Cursos</div>
+              </ng-template>
+              <div class="flex justify-content-center">
+                <p-chart type="doughnut" [data]="statusChartData" [options]="chartOptions" styleClass="w-full md:w-8" />
+              </div>
+            </p-card>
+          </div>
+
+          <div class="lg:col-6">
+            <p-card>
+              <ng-template pTemplate="title">
+                <div class="font-bold text-xl">Top Cursos por Alunos</div>
+              </ng-template>
+              <p-chart type="bar" [data]="topCoursesChartData" [options]="chartOptions" />
+            </p-card>
+          </div>
+        </div>
+      </div>
+    </div>
+
+<!--          [value]="mockCourses"-->
+    <p-table
+      [value]="courses"
+      styleClass="p-datatable-striped"
+      [paginator]="true"
+      [rows]="10"
+      responsiveLayout="scroll">
+
+      <ng-template pTemplate="caption">
+        <div class="flex justify-content-between align-items-center">
+          <h2 class="text-xl font-bold m-0">Meus Cursos</h2>
+          <p-button label="Criar Novo Curso" icon="pi pi-plus" />
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="font-bold">Nome</th>
+<!--          <th class="text-center">Alunos</th>-->
+          <th class="text-center font-bold">Status</th>
+          <th style="width: 8rem" class="text-center font-bold">Ações</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-course>
+        <tr>
+          <td>
+            <span class="font-bold">{{ course.title }}</span>
+          </td>
+<!--          <td class="text-center">{{ course.studentCount }}</td>-->
+          <td class="text-center">
+            <p-tag [value]="course.status" [severity]="getStatutsSeverity(course.status)" />
+          </td>
+          <td class="text-center">
+            <p-button label="Gerenciar" icon="pi pi-cog" styleClass="p-button-sm"
+                      (click)="manageCourse(course.public_id)" />
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+
+  </div>
+</div>
