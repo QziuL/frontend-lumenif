@@ -25,7 +25,7 @@ export class HomeComponent {
     this.router.navigate(['/login']);
   }
 
-  dashboard() {
+  adminDashboard() {
     if(!this.authService.isLoggedIn())
     {
       console.log("Usuário não está logado.");
@@ -46,5 +46,29 @@ export class HomeComponent {
         }
       }
     }
+  }
+
+  creatorDashboard() {
+    this.router.navigate(['/creator/dashboard']);
+    // if(!this.authService.isLoggedIn())
+    // {
+    //   console.log("Usuário não está logado.");
+    //   this.router.navigate(['/login']);
+    // }
+    // else
+    // {
+    //   const user = this.authService.getCurrentUser();
+    //
+    //   if(user)
+    //   {
+    //     if(user.roles.some(r => r.name === 'CRIADOR'))
+    //       this.router.navigate(['/creator/dashboard']);
+    //     else
+    //     {
+    //       console.log("Usuário não é criador.");
+    //       this.router.navigate(['/home']);
+    //     }
+    //   }
+    // }
   }
 }

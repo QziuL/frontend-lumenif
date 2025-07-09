@@ -21,7 +21,7 @@ import {HomeComponent} from '../../../buttons/home/home.component';
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
-export class DashboardComponent {
+export class AdminDashboardComponent {
   totalUsers: number = 0;
   constructor() {}
 
