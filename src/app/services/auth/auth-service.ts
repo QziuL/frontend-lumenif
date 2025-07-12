@@ -81,4 +81,11 @@ export class AuthService {
   isLoggedIn(){
     return !!this.getToken();
   }
+
+  // Limpa os dados de autenticação do localStorage
+  logoutLocally(): void {
+    this.removeToken();
+    this.removeUser();
+    console.log('Dados locais de autenticação removidos.');
+  }
 }
