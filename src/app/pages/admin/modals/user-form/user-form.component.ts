@@ -43,6 +43,7 @@ export class UserFormComponent {
       public_id: [''],
       name: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required],
       role_id: [null, Validators.required],
     });
   }

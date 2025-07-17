@@ -1,0 +1,82 @@
+<div class="p-4 sm:p-6 lg:p-8 min-h-screen">
+  <div class="max-w-7xl mx-auto">
+
+    <header class="mb-8">
+      <h1 class="text-3xl font-bold text-color-primary">Gerenciamento de Cursos</h1>
+      <p class="text-color-secondary mt-1">Aprove, rejeite e visualize os cursos da plataforma.</p>
+    </header>
+
+    <p-table
+      [value]="courses"
+      styleClass="p-datatable-striped"
+      [rows]="10"
+      [globalFilterFields]="['title', 'creator.name', 'status']"
+      #dt>
+
+      <ng-template pTemplate="caption">
+        <div class="flex justify-content-end">
+          <span class="p-input-icon-left">
+            <i class="pi pi-search"></i>
+            <input
+              pInputText
+              type="text"
+              (input)="onGlobalFilter($event)"
+              placeholder="Buscar curso..." />
+          </span>
+        </div>
+      </ng-template>
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th pSortableColumn="title">Título <p-sortIcon field="title"></p-sortIcon></th>
+          <th pSortableColumn="creator.name">Criador <p-sortIcon field="creator.name"></p-sortIcon></th>
+          <th pSortableColumn="status" style="width: 12rem;">Status <p-sortIcon field="status"></p-sortIcon></th>
+          <th style="width: 12rem;" class="text-center">Ações</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-course>
+        <tr>
+          <td>{{ course.title }}</td>
+          <td>{{ course.creator }}</td>
+          <td>
+            <p-tag [value]="course.status" [severity]="getStatusSeverity(course.status)" />
+          </td>
+          <td class="text-center">
+            @if (course.status === 'Pendente') {
+              <div class="flex gap-2 justify-content-center">
+                <p-button icon="pi pi-check"
+                          styleClass="p-button-success"
+                          (click)="approveCourse(course.public_id)"
+                          pTooltip="Aprovar" tooltipPosition="top" />
+
+                <p-button icon="pi pi-times"
+                          styleClass="p-button-danger"
+                          (click)="rejectCourse(course.public_id)"
+                          pTooltip="Rejeitar"
+                          tooltipPosition="top" />
+              </div>
+            } @else if (course.status === 'Aprovado') {
+              <p-button label="Ver Detalhes"
+                        icon="pi pi-eye"
+                        styleClass="p-button-text p-button-sm"
+                        (click)="viewCourse(course.public_id)" />
+            } @else {
+              <span class="text-color-secondary text-sm">N/A</span>
+            }
+          </td>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="emptymessage">
+        <tr>
+          <td colspan="4" class="text-center p-4">Nenhum curso encontrado.</td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+  </div>
+</div>
+
+<p-toast></p-toast>
+<p-confirmDialog></p-confirmDialog>

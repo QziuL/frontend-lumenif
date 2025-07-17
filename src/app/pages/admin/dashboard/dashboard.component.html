@@ -2,10 +2,6 @@
   <header class="mb-6">
     <h1 class="text-3xl font-bold text-gray-800">Painel do Administrador</h1>
     <p class="text-gray-500 mt-1">Visão geral e gerenciamento do sistema LumenIF.</p>
-    <div class="flex justify-content-between">
-      <app-home></app-home>
-      <app-logout></app-logout>
-    </div>
   </header>
 
   <div class="grid">
@@ -22,7 +18,8 @@
       <p-card header="Cursos Publicados">
         <div class="flex align-items-center">
           <i class="pi pi-book text-green-500 text-3xl mr-4"></i>
-          <span class="text-2xl font-bold text-gray-800">42</span>
+          <span class="text-2xl font-bold text-gray-800">{{ totalCoursesApproved }}</span>
+          <p-button class="ml-4" icon="pi pi-eye" (onClick)="manageCourses()"/>
         </div>
       </p-card>
     </div>
@@ -31,7 +28,8 @@
       <p-card header="Cursos para Aprovação">
         <div class="flex align-items-center">
           <i class="pi pi-inbox text-yellow-500 text-3xl mr-4"></i>
-          <span class="text-2xl font-bold text-gray-800">5</span>
+          <span class="text-2xl font-bold text-gray-800">{{ totalCoursesPending }}</span>
+          <p-button class="ml-4" icon="pi pi-eye" (onClick)="manageCourses()"/>
         </div>
       </p-card>
     </div>

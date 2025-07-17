@@ -71,7 +71,7 @@ export class UserList implements OnInit {
         return 'danger';
       case 'CRIADOR':
         return 'info';
-      case 'ALUNO':
+      case 'STUDENT':
         return 'secondary';
       default:
         return 'primary';

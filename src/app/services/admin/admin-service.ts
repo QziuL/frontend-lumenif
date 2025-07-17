@@ -11,12 +11,30 @@ export class AdminService {
 
   constructor(private http: HttpClient) { }
 
-  // Método para buscar usuários
   getAllUsers(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/users`);
   }
 
-  // Método para buscar roles
+  getAllCourses(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/courses`);
+  }
+
+  getAllCoursesApproved(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/courses-approved`);
+  }
+
+  getAllCoursesPending(): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/courses-pending`);
+  }
+
+  approveCourse(id: string): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/courses/${id}/approve`, {});
+  }
+
+  rejectCourse(id: string): Observable<any> {
+    return this.http.put<any>(`${this.apiUrl}/courses/${id}/reject`, {});
+  }
+
   getRoles(): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/roles`);
   }
