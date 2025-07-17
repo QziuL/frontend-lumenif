@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
+import {FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {AuthService} from '../../services/auth/auth-service';
 import {ActivatedRoute, Router, RouterLink} from '@angular/router';
 import {ButtonModule} from 'primeng/button';
@@ -7,6 +7,7 @@ import {CardModule} from 'primeng/card';
 import {InputTextModule} from 'primeng/inputtext';
 import {FloatLabelModule} from 'primeng/floatlabel';
 import { MessageModule } from 'primeng/message';
+import {Password} from 'primeng/password';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +18,9 @@ import { MessageModule } from 'primeng/message';
     InputTextModule,
     ButtonModule,
     FloatLabelModule,
-    MessageModule
+    MessageModule,
+    Password,
+    FormsModule
   ],
   templateUrl: './login.html',
   styleUrl: './login.css'

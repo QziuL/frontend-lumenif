@@ -42,9 +42,6 @@ export class AuthService {
         console.log('Removido TOKEN e USER');
       })
     );
-    // this.removeToken();
-    // this.removeUser();
-    // console.log('removido tokens e user', this.getToken(), this.getCurrentUser());
   }
 
   saveUser(user: UserInterface): void {

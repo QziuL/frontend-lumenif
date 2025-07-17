@@ -15,19 +15,21 @@ import {InputText} from "primeng/inputtext";
 import {Message} from "primeng/message";
 import {ActivatedRoute, Router, RouterLink} from "@angular/router";
 import {AuthService} from '../../services/auth/auth-service';
+import {Password} from 'primeng/password';
 
 @Component({
   selector: 'app-register',
-    imports: [
-        Button,
-        Card,
-        FloatLabel,
-        FormsModule,
-        InputText,
-        Message,
-        ReactiveFormsModule,
-        RouterLink
-    ],
+  imports: [
+    Button,
+    Card,
+    FloatLabel,
+    FormsModule,
+    InputText,
+    Message,
+    ReactiveFormsModule,
+    RouterLink,
+    Password
+  ],
   templateUrl: './register.component.html',
   styleUrl: './register.component.css'
 })

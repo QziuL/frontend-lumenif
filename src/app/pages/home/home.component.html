@@ -1,16 +1,39 @@
-<p-button
-  label="Logout"
-  (onClick)="logout()"
-/>
+<div class="px-4 sm:px-4 lg:px-4 py-4">
+  <div class="max-w-7xl mx-auto">
 
-<p-button
-  class="ml-4"
-  label="Admin Dashboard"
-  (onClick)="adminDashboard()"
-/>
+    <section class="text-center my-8">
+      <h2 class="text-4xl font-bold text-primary">Iluminando Saberes</h2>
+      <p class="mt-2 text-xl text-color-secondary">Explore cursos gratuitos criados pela nossa comunidade acadêmica.</p>
+      <div class="mt-6">
+        <span class="p-input-icon-left w-full md:w-6">
+          <i class="pi pi-search mb-4"></i>
+          <input type="text" pInputText placeholder="Buscar cursos..." class="w-full" />
+        </span>
+      </div>
+    </section>
 
-<p-button
-  class="ml-4"
-  label="Creator Dashboard"
-  (onClick)="creatorDashboard()"
-/>
+    <section class="mt-12">
+      <div class="grid">
+        @for (course of courses; track course.public_id) {
+          <div class="col-12 md:col-6 lg:col-4">
+            <p-card [header]="course.title" styleClass="h-full flex flex-column">
+              <p class="text-color-secondary m-0">{{ course.description | slice:0:100 }}...</p>
+
+              <ng-template pTemplate="footer">
+                <div class="mt-auto"> <p-button
+                  label="Ver Detalhes"
+                  styleClass="w-full"
+                  icon="pi pi-arrow-right"
+                  iconPos="right"
+                  (click)="viewCourseDetails(course.public_id)" />
+                </div>
+              </ng-template>
+            </p-card>
+          </div>
+        } @empty {
+          <p class="text-center col-12">Nenhum curso disponível no momento.</p>
+        }
+      </div>
+    </section>
+  </div>
+</div>

@@ -27,7 +27,15 @@ font-bold">
 
       <div class="field mt-5">
         <p-float-label>
-          <input pInputText id="password" type="password" formControlName="password" class="w-full" />
+          <p-password inputStyleClass="w-full"
+                      inputId="password"
+                      type="password"
+                      formControlName="password"
+                      class="w-full"
+                      [style]="{'width':'100%'}"
+                      [inputStyle]="{'width':'100%'}"
+                      [toggleMask]="true"
+          />
           <label for="password">Senha</label>
         </p-float-label>
       </div>

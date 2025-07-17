@@ -1,0 +1,70 @@
+<div class="p-4 sm:p-6 lg:p-8">
+  <div class="max-w-7xl mx-auto">
+    <div class="grid">
+      <div class="col-12 md:col-8">
+        @if(isLoading) {
+          <div class="p-4 border-round border-1 surface-border surface-card">
+            <p-skeleton width="40%" height="2rem" styleClass="mb-4"></p-skeleton>
+            <p-skeleton width="100%" height="150px" styleClass="mb-4"></p-skeleton>
+            <p-skeleton width="100%" height="50px" styleClass="mb-2"></p-skeleton>
+            <p-skeleton width="100%" height="50px"></p-skeleton>
+          </div>
+        } @else if (course) {
+          <div class="surface-card p-4 rounded-lg shadow-md">
+            <h2 class="text-2xl font-bold text-color mt-0">Conteúdo do Curso</h2>
+            <p-accordion [multiple]="true">
+              @for (module of course.modules; track module.public_id) {
+                <p-accordion-panel>
+                  <p-accordion-header>{{ module.title }}</p-accordion-header>
+                  <p-accordion-content>
+                    <ul class="list-none p-0 m-0">
+                      @for (classe of module.lessons; track classe.public_id) {
+                        <li class="flex align-items-center p-2">
+                          <i class="pi pi-play-circle mr-2 text-primary"></i>
+                          <span>{{ classe.title }}</span>
+                        </li>
+                      } @empty {
+                        <li class="p-2 text-color-secondary">Nenhuma aula neste módulo.</li>
+                      }
+                    </ul>
+                  </p-accordion-content>
+                </p-accordion-panel>
+              } @empty {
+                <p class="p-2 text-color-secondary">Nenhum módulo disponível para este curso.</p>
+              }
+            </p-accordion>
+          </div>
+        }
+      </div>
+
+      <div class="col-12 md:col-4">
+        @if(isLoading) {
+          <p-skeleton width="100%" height="300px"></p-skeleton>
+        } @else if (course) {
+          <p-card>
+            <ng-template pTemplate="header">
+            </ng-template>
+            <ng-template pTemplate="title">
+              <h2 class="mt-0">{{ course.title }}</h2>
+            </ng-template>
+            <p class="text-color-secondary">{{ course.description }}</p>
+            @if (isUserEnrolled) {
+              <p-button
+                label="Acessar Curso"
+                styleClass="w-full mt-4 p-button-success"
+                icon="pi pi-play"
+                (click)="accessCourse()" />
+            } @else {
+              <p-confirmDialog />
+              <p-button
+                label="Inscrever-se Gratuitamente"
+                styleClass="w-full mt-4"
+                icon="pi pi-check"
+                (click)="confirmEnroll()"/>
+            }
+          </p-card>
+        }
+      </div>
+    </div>
+  </div>
+</div>

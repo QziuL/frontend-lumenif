@@ -1,74 +1,54 @@
 import { Component } from '@angular/core';
 import {ButtonModule} from 'primeng/button';
 import {Router} from '@angular/router';
-import {AuthService} from '../../services/auth/auth-service';
+import {Course} from '../../interfaces/course-model-interface';
+import {InputText} from 'primeng/inputtext';
+import {Card} from 'primeng/card';
+import {SlicePipe} from '@angular/common';
+import {PublicCourseService} from '../../services/public/course/public-course.service';
 
 @Component({
   selector: 'app-home',
   imports: [
-    ButtonModule
+    ButtonModule,
+    InputText,
+    Card,
+    SlicePipe
   ],
   templateUrl: './home.component.html',
   styleUrl: './home.component.css'
 })
 export class HomeComponent {
-  returnUrl: string = '';
-  errorMessage: string | null = null;
+  courses: Course[] = [];
+  isLoading = true;
 
-  constructor(private authService: AuthService, private router: Router) {
-    console.log('usuario atual',this.authService.getCurrentUser());
-    console.log('token atual', this.authService.getToken());
+  constructor(
+    private courseService: PublicCourseService,
+    private router: Router
+  ) {}
+
+  ngOnInit(): void {
+    // Usaremos dados mockados até conectar a API
+    this.loadApprovedCourses();
   }
 
-  logout() {
-    this.authService.logout();
-    this.router.navigate(['/login']);
-  }
+  loadApprovedCourses(): void {
+    this.isLoading = true;
 
-  adminDashboard() {
-    if(!this.authService.isLoggedIn())
-    {
-      console.log("Usuário não está logado.");
-      this.router.navigate(['/login']);
-    }
-    else
-    {
-      const user = this.authService.getCurrentUser();
-
-      if(user)
-      {
-        if(user.roles.some(r => r.name === 'ADMIN'))
-          this.router.navigate(['/admin/dashboard']);
-        else
-        {
-          console.log("Usuário não é admin.");
-          this.router.navigate(['/home']);
-        }
+    this.courseService.getApprovedCourses().subscribe({
+      next: data => {
+        this.courses = data;
+        this.isLoading = false;
+        console.log(this.courses);
+      },
+      error: err => {
+        console.log(err);
+        this.isLoading = false;
       }
-    }
+    });
   }
 
-  creatorDashboard() {
-    this.router.navigate(['/creator/dashboard']);
-    // if(!this.authService.isLoggedIn())
-    // {
-    //   console.log("Usuário não está logado.");
-    //   this.router.navigate(['/login']);
-    // }
-    // else
-    // {
-    //   const user = this.authService.getCurrentUser();
-    //
-    //   if(user)
-    //   {
-    //     if(user.roles.some(r => r.name === 'CRIADOR'))
-    //       this.router.navigate(['/creator/dashboard']);
-    //     else
-    //     {
-    //       console.log("Usuário não é criador.");
-    //       this.router.navigate(['/home']);
-    //     }
-    //   }
-    // }
+  viewCourseDetails(courseId: string): void {
+    this.router.navigate(['app/course/', courseId]); // Rota para detalhes do curso
   }
 }
