@@ -1,0 +1,33 @@
+<p-dialog
+  header="Criar Novo Curso"
+  [(visible)]="displayModal"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  (onHide)="hideDialog()">
+
+  <form [formGroup]="courseForm" (ngSubmit)="saveCourse()">
+    <div class="p-fluid">
+      <div class="field flex flex-column gap-2">
+        <label for="title" class="font-semibold">Título do Curso</label>
+        <input pInputText id="title" formControlName="title" />
+      </div>
+
+      <div class="field flex flex-column gap-2">
+        <label for="description" class="font-semibold">Descrição do Curso</label>
+        <textarea
+          pInputTextarea
+          id="description"
+          formControlName="description"
+          [rows]="5"
+          [autoResize]="true">
+        </textarea>
+      </div>
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Cancelar" icon="pi pi-times" styleClass="p-button-text" (click)="hideDialog()" />
+    <p-button label="Criar e Gerenciar" icon="pi pi-check" [disabled]="courseForm.invalid" (click)="saveCourse()" />
+  </ng-template>
+
+</p-dialog>

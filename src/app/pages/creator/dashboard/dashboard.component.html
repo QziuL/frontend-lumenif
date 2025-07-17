@@ -4,7 +4,6 @@
     <header class="mb-8">
       <h1 class="text-3xl font-bold text-black">Meu Painel de Criador</h1>
       <p class="text-color-secondary mt-1">Gerencie seus cursos e acompanhe seu progresso.</p>
-      <p-button icon="pi pi-moon" label="Toggle Dark Mode" (onClick)="toggleDarkMode()"/>
     </header>
 
     <div class="grid">
@@ -12,7 +11,7 @@
         <p-card header="Meus Cursos">
           <div class="flex align-items-center">
             <i class="pi pi-book text-blue-500 text-3xl mr-4"></i>
-            <span class="text-2xl font-bold">{{ courses.length }}</span>
+            <span class="text-2xl font-bold">{{ kpiTotalCursos }}</span>
           </div>
         </p-card>
       </div>
@@ -20,7 +19,7 @@
         <p-card header="Total de Alunos">
           <div class="flex align-items-center">
             <i class="pi pi-users text-green-500 text-3xl mr-4"></i>
-            <span class="text-2xl font-bold">256</span>
+            <span class="text-2xl font-bold">{{ kpiTotalAlunos }}</span>
           </div>
         </p-card>
       </div>
@@ -28,27 +27,36 @@
         <p-card header="Avaliação Média">
           <div class="flex align-items-center">
             <i class="pi pi-star-fill text-yellow-500 text-3xl mr-4"></i>
-            <span class="text-2xl font-bold">4.8</span>
+            <span class="text-2xl font-bold">{{ kpiAvaliacaoMedia }}</span>
           </div>
         </p-card>
       </div>
     </div>
 
-
-
     <div class="px-4 py-6">
       <div class="max-w-7xl mx-auto">
         <div class="grid">
         </div>
-
         <div class="grid mt-6">
           <div class="col-12 lg:col-6">
             <p-card>
               <ng-template pTemplate="title">
-                <div class="font-bold text-xl">Status dos Cursos</div>
+                <div class="flex justify-content-between align-items-center">
+                  <span class="font-bold text-xl">Status dos Cursos</span>
+                  <p-button
+                    icon="pi pi-file-pdf"
+                    styleClass="p-button-text p-button-danger"
+                    pTooltip="Exportar como PDF"
+                    (click)="downloadChartAsPdf(statusChart, 'relatorio_status_cursos.pdf')"
+                  />
+                </div>
               </ng-template>
               <div class="flex justify-content-center">
-                <p-chart type="doughnut" [data]="statusChartData" [options]="chartOptions" styleClass="w-full md:w-8" />
+                <p-chart type="doughnut"
+                         [data]="statusChartData"
+                         [options]="chartOptions"
+                         pStyleClass="w-full md:w-8"
+                         #statusChart/>
               </div>
             </p-card>
           </div>
@@ -56,27 +64,39 @@
           <div class="lg:col-6">
             <p-card>
               <ng-template pTemplate="title">
-                <div class="font-bold text-xl">Top Cursos por Alunos</div>
+                <div class="flex justify-content-between align-items-center">
+                  <span class="font-bold text-xl">Top Cursos por Alunos</span>
+                  <p-button
+                    icon="pi pi-file-pdf"
+                    styleClass="p-button-text p-button-danger"
+                    pTooltip="Exportar como PDF"
+                    (click)="downloadChartAsPdf(topCoursesChart, 'relatorio_top_cursos.pdf')"
+                  />
+                </div>
               </ng-template>
-              <p-chart type="bar" [data]="topCoursesChartData" [options]="chartOptions" />
+              <p-chart type="bar"
+                       [data]="topCoursesChartData"
+                       [options]="chartOptions"
+                       #topCoursesChart/>
             </p-card>
           </div>
         </div>
       </div>
     </div>
 
-<!--          [value]="mockCourses"-->
     <p-table
       [value]="courses"
       styleClass="p-datatable-striped"
       [paginator]="true"
-      [rows]="10"
+      [rows]="5"
+      currentPageReportTemplate="Mostrando {first} a {last} de {totalRecords} usuários"
+      [rowsPerPageOptions]="[5, 10, 20]">
       responsiveLayout="scroll">
 
       <ng-template pTemplate="caption">
         <div class="flex justify-content-between align-items-center">
           <h2 class="text-xl font-bold m-0">Meus Cursos</h2>
-          <p-button label="Criar Novo Curso" icon="pi pi-plus" />
+          <p-button label="Criar Novo Curso" icon="pi pi-plus" (click)="showCreateCourseModal()"/>
         </div>
       </ng-template>
 
@@ -94,7 +114,6 @@
           <td>
             <span class="font-bold">{{ course.title }}</span>
           </td>
-<!--          <td class="text-center">{{ course.studentCount }}</td>-->
           <td class="text-center">
             <p-tag [value]="course.status" [severity]="getStatutsSeverity(course.status)" />
           </td>
@@ -105,6 +124,11 @@
         </tr>
       </ng-template>
     </p-table>
-
   </div>
 </div>
+
+<app-public-form
+  [displayModal]="displayCreateCourseModal"
+  (onHideModal)="hideCourseModal()"
+  (onSaveCourse)="handleSaveCourse($event)">
+</app-public-form>

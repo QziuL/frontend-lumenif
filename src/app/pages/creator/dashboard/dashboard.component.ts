@@ -1,4 +1,4 @@
-import {Component, EventEmitter, OnInit, Output} from '@angular/core';
+import {Component, OnInit, ViewChild} from '@angular/core';
 import {Card} from 'primeng/card';
 import {TableModule} from 'primeng/table';
 import {Button} from 'primeng/button';
@@ -7,6 +7,12 @@ import {Router} from '@angular/router';
 import {CreatorService} from '../../../services/creator/creator-service';
 import {CourseInterface} from '../../../interfaces/course-interface';
 import {UIChart} from 'primeng/chart';
+import {StyleClass} from 'primeng/styleclass';
+import {AuthService} from '../../../services/auth/auth-service';
+import {CourseFormComponent} from '../modals/course-form/course-form.component';
+import {Tooltip} from 'primeng/tooltip';
+import { ChartDataset } from 'chart.js';
+import jsPDF from 'jspdf';
 
 export interface Course {
   id: string;
@@ -22,34 +28,49 @@ export interface Course {
     TableModule,
     Button,
     Tag,
-    UIChart
+    UIChart,
+    CourseFormComponent,
+    StyleClass,
+    Tooltip,
   ],
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css'
 })
 export class CreatorDashboardComponent implements OnInit {
-  // Para ter o total de alunos vinculados ao curso, é necessário
-  // desenvolver o vinculo de aluno com curso no backend
-  @Output() totalCourses: EventEmitter<number> = new EventEmitter();
+  @ViewChild('statusChart') statusChart: UIChart | undefined;
+  @ViewChild('topCoursesChart') topCoursesChart: UIChart | undefined;
+
+  kpiTotalCursos: number = 0;
+  kpiTotalAlunos: number = 0;
+  kpiAvaliacaoMedia: number = 0;
 
   statusChartData: any;
   topCoursesChartData: any;
   chartOptions: any;
 
-  // mockCourses: Course[] = [
-  //   { id: 'uuid-1', title: 'Introdução ao Angular com PrimeNG', studentCount: 150, status: 'Aprovado' },
-  //   { id: 'uuid-2', title: 'API RESTful com Laravel 12', studentCount: 85, status: 'Aprovado' },
-  //   { id: 'uuid-3', title: 'Docker para Desenvolvedores', studentCount: 21, status: 'Pendente' },
-  //   { id: 'uuid-4', title: 'Fundamentos de UX/UI', studentCount: 0, status: 'Rejeitado' },
-  // ];
+  displayCreateCourseModal = false;
 
   courses: CourseInterface[] = [];
   errorMessage: string | null = null;
 
-  constructor(private router: Router, private creatorService: CreatorService) {}
+  constructor(private router: Router, private creatorService: CreatorService, private authService: AuthService) {}
 
   ngOnInit() {
+    console.log('token: ', this.authService.getToken());
+    this.loadDashboardData();
     this.loadCourses();
+    // this.initCharts();
+  }
+
+  loadDashboardData(): void {
+    // Busca os dados dos cards de KPI
+    this.creatorService.getDashboardKpis().subscribe(kpis => {
+      this.kpiTotalCursos = kpis.totalCursos;
+      this.kpiTotalAlunos = kpis.totalAlunos;
+      this.kpiAvaliacaoMedia = kpis.avaliacaoMedia;
+    });
+
+    // Inicia o carregamento dos gráficos
     this.initCharts();
   }
 
@@ -116,10 +137,8 @@ export class CreatorDashboardComponent implements OnInit {
     });
   }
 
-  // Placeholder para a ação de gerenciar
   manageCourse(courseId: string): void {
-    console.log(`Navegando para o gerenciamento do curso: ${courseId}`);
-    // this.router.navigate(['/creator/course', courseId, 'edit']);
+    this.router.navigate(['/app/creator/manage-course/', courseId]);
   }
 
   // Função auxiliar para definir a cor da Tag de Status
@@ -132,11 +151,72 @@ export class CreatorDashboardComponent implements OnInit {
     }
   }
 
-  // BUTTON DARK MODE
-  toggleDarkMode() {
-    const element = document.querySelector('html');
-    if(element) {
-      element.classList.toggle('my-app-dark');
+  // Gera o Relatório PDF com os Gráficos
+  downloadChartAsPdf(chartInstance: UIChart | undefined, fileName: string): void {
+    if (!chartInstance) {
+      console.error('Instância do gráfico não encontrada!');
+      return;
     }
+
+    // 1. Usa um pequeno timeout para garantir que a animação do gráfico terminou
+    setTimeout(() => {
+      // 2. O Chart.js nos dá uma imagem do gráfico em formato Base64
+      const chartImage = chartInstance.getBase64Image();
+
+      // 3. Cria uma nova instância do jsPDF (A4, retrato, milímetros)
+      const doc = new jsPDF('p', 'mm', 'a4');
+
+      // 4. Adiciona um título ao PDF
+      // const title = fileName.replace('.pdf', '').replace(/_/g, ' ');
+      const title = `Relatório de ${fileName.replace('relatorio', '')
+        .replace('.pdf', '')
+        .replace(/_/g, ' ')}.`;
+
+      doc.setFontSize(16);
+      doc.text(title, 15, 20);
+
+      // 5. Adiciona a imagem do gráfico ao PDF
+      // (imagem, formato, x, y, largura, altura)
+      const imgWidth = 60;
+      const imgHeight = (chartInstance.chart.height * imgWidth) / chartInstance.chart.width;
+      doc.addImage(chartImage, 'PNG', 15, 30, imgWidth, imgHeight);
+
+      (chartInstance.data.datasets as ChartDataset<'bar'>[]).forEach((dataset, index) => {
+        const label = dataset.label ?? `Série ${index + 1}`;
+        const dataStr = (dataset.data as number[]).join(', ') ?? 'Sem dados';
+        doc.text(`${label}: ${dataStr}`, 15, 40 + index * 10);
+      });
+      // 6. Salva o arquivo e força o download
+      doc.save(fileName);
+
+    }, 500); // 500ms de espera
+  }
+
+  showCreateCourseModal(): void {
+    this.displayCreateCourseModal = true;
+  }
+
+  hideCourseModal(): void {
+    this.displayCreateCourseModal = false;
+  }
+
+  // Salva novo curso
+  handleSaveCourse(courseData: { titulo: string; descricao: string }): void {
+    console.log('Criando curso com os dados:', courseData);
+    this.creatorService.createCourse(courseData).subscribe({
+      next: (newCourse) => { //
+        console.log('Curso criado com sucesso!', newCourse);
+        this.hideCourseModal(); // Fecha o modal
+
+        // Redireciona para uma nova página de gerenciamento, passando o ID do novo curso
+        // this.router.navigate(['/creator/manage-public', newCourse.public_id]);
+        this.loadCourses();
+        this.initCharts();
+      },
+      error: (err) => {
+        console.error('Erro ao criar o curso', err);
+        // Lembrar de usar Toast do PrimeNG para mensagem de erro
+      }
+    });
   }
 }

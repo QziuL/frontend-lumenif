@@ -1,0 +1,99 @@
+<p-dialog header="Criar Nova Aula" [(visible)]="displayModal" [modal]="true" [style]="{ width: '700px' }" (onHide)="hideDialog()">
+
+  <form [formGroup]="lessonForm">
+    <div class="field">
+      <label for="lesson_title" class="font-semibold block mb-2">Título da Aula</label>
+      <input pInputText id="lesson_title" formControlName="title" class="w-full" placeholder="Ex: Introdução ao Componente de Tabela">
+    </div>
+  </form>
+
+  <hr class="my-4">
+
+  <div class="p-4 rounded-md">
+    <h3 class="font-bold mt-0 mb-3">Construtor de Conteúdo</h3>
+
+    <p-select
+      [options]="contentTypes"
+      optionLabel="name"
+      placeholder="Selecione um tipo de conteúdo para adicionar"
+      (onChange)="onContentTypeChange($event)"
+      [(ngModel)]="selectedContentType"
+      appendTo="body"
+      styleClass="w-full"
+    />
+
+    @if(selectedContentType; as contentType) {
+      <div [formGroup]="contentBlockForm" class="mt-3 p-3 border-1 border-dashed border-round">
+
+        @switch (contentType.id) {
+          @case (1) {
+            <div class="field flex flex-column gap-2">
+              <label for="url_content">URL do Vídeo</label>
+              <input pInputText id="url_content" formControlName="url_content" />
+            </div>
+            <div class="field flex flex-column gap-2 mt-2">
+              <label for="duration_seconds">Duração (em segundos)</label>
+              <input pInputText id="duration_seconds" type="number" formControlName="duration_seconds" />
+            </div>
+          }
+          @case (2) {
+            <div class="field flex flex-column gap-2">
+              <label for="text_content">Conteúdo Textual</label>
+              <p-editor formControlName="text_content" [style]="{ height: '200px' }"></p-editor>
+            </div>
+          }
+          @case (5) { <div class="field flex flex-column gap-2">
+            <label for="file_content">Arquivo para Upload</label>
+
+            <p-fileUpload
+              mode="basic"
+              name="file_content"
+              chooseLabel="Selecionar Arquivo"
+              (onSelect)="onFileSelect($event)"
+              [customUpload]="true">
+            </p-fileUpload>
+
+            @if(selectedFile) {
+              <div class="mt-2 text-sm text-gray-500">
+                <i class="pi pi-file mr-2"></i>
+                <span>Arquivo selecionado: {{ selectedFile.name }}</span>
+              </div>
+            }
+          </div>
+          }
+
+        }
+
+        <div class="text-right mt-3">
+          <p-button label="Adicionar Bloco de Conteúdo" icon="pi pi-plus" [disabled]="contentBlockForm.invalid" (click)="addContentBlock()" />
+        </div>
+      </div>
+    }
+  </div>
+
+  <div class="mt-4">
+    <h4 class="font-bold mt-0">Conteúdos desta Aula:</h4>
+    @for (block of stagedContents; track $index) {
+      <div class="flex justify-content-between align-items-center p-3 mb-2 rounded-md border-1 border-gray-300">
+        <div>
+          <i [class]="block.contentType.icon" class="mr-2"></i>
+          <span class="font-semibold">{{ block.contentType.name }}</span>:
+          <span class="text-gray-600 ml-2">{{ block.contentType.id === 3 ? block.file?.name : 'Conteúdo preenchido' }}</span>
+        </div>
+        <p-button icon="pi pi-trash" styleClass="p-button-text p-button-danger p-button-sm"
+                  (click)="removeContentBlock($index)"
+                  pTooltip="Remover Bloco" />
+      </div>
+    } @empty {
+      <p class="text-center text-gray-500 p-3 rounded-md">Nenhum bloco de conteúdo adicionado ainda.</p>
+    }
+  </div>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Cancelar" icon="pi pi-times" styleClass="p-button-text" (click)="hideDialog()" />
+    <p-button label="Salvar Aula" icon="pi pi-check"
+              [disabled]="lessonForm.invalid || stagedContents.length === 0"
+              [loading]="isLoading"
+              (click)="saveLesson()" />
+  </ng-template>
+</p-dialog>

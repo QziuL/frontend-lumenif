@@ -1,0 +1,29 @@
+<p-dialog
+  [header]="isEditMode ? 'Editar Módulo' : 'Adicionar Novo Módulo'"
+  [(visible)]="displayModal"
+  [modal]="true"
+  [style]="{ width: '500px' }"
+  (onHide)="hideDialog()">
+
+  <form [formGroup]="moduleForm" (ngSubmit)="saveModule()">
+    <div class="p-fluid">
+      <div class="field flex flex-column gap-2">
+        <label for="title" class="font-semibold">Título do Módulo</label>
+        <input pInputText id="title" formControlName="title" />
+      </div>
+
+      <div class="field flex flex-column gap-2 mt-3">
+        <label for="description" class="font-semibold">Descrição</label>
+        <textarea pInputTextarea id="description" formControlName="description" [rows]="4" [autoResize]="true"></textarea>
+      </div>
+
+      <input type="hidden" formControlName="order">
+    </div>
+  </form>
+
+  <ng-template pTemplate="footer">
+    <p-button label="Cancelar" icon="pi pi-times" styleClass="p-button-text" (click)="hideDialog()" />
+    <p-button [label]="isEditMode ? 'Salvar Alterações' : 'Salvar Módulo'" icon="pi pi-check" [disabled]="moduleForm.invalid" (click)="saveModule()" />
+  </ng-template>
+
+</p-dialog>

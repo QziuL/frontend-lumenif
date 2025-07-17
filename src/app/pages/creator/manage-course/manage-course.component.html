@@ -1,0 +1,151 @@
+<p-confirmDialog></p-confirmDialog>
+<div class="p-4 sm:p-6 lg:p-8 min-h-screen">
+  <div class="max-w-7xl mx-auto">
+
+    <header class="mb-6">
+      <p class="text-color-secondary">Gerenciando o curso:</p>
+      <h1 class="text-3xl font-bold text-black">{{ courseData?.title }}</h1>
+    </header>
+
+    <p-tabView>
+      <p-tabPanel header="Detalhes do Curso">
+        <div class="p-fluid grid">
+          <div class="field flex flex-column col-12">
+            <label for="title" class="font-semibold">Título do Curso</label>
+            <input pInputText id="title" [value]="courseData?.title" />
+          </div>
+          <div class="field flex flex-column col-12 mt-3">
+            <label for="description" class="font-semibold">Descrição</label>
+            <textarea pInputTextarea id="description" [value]="courseData?.description" [rows]="5"></textarea>
+          </div>
+          <div class="col-12 mt-4">
+            <p-button label="Salvar Alterações" (onClick)="editCourse()" icon="pi pi-check" />
+          </div>
+        </div>
+      </p-tabPanel>
+
+      @if (courseData) {
+        <p-tabPanel header="Conteúdo Programático">
+          <div class="flex justify-content-end mb-4">
+            <p-button label="Adicionar Módulo" icon="pi pi-plus" styleClass="p-button-success" (click)="addModule()" />
+          </div>
+
+          @if (isLoading) {
+            <div class="flex justify-content-end mb-4">
+              <p>Carregando....</p>
+            </div>
+          } @else {
+            <p-accordion [multiple]="true" [value]="0">
+              @if (courseData.modules.length > 0) {
+                @for (module of courseData.modules; track module.public_id) {
+                    <p-accordion-panel [value]="module.order">
+                      <p-accordion-header >
+                        <div class="flex align-items-center justify-content-between w-full">
+                          <span class="font-bold">{{ module.title }}</span>
+                          <div class="p-3">
+                            <p-button icon="pi pi-pencil"
+                                      styleClass="p-button-text p-button-sm"
+                                      (click)="editModule(module);
+                                  $event.stopPropagation()"
+                            />
+
+                            <p-button icon="pi pi-trash"
+                                      styleClass="p-button-text p-button-sm p-button-danger"
+                                      (click)="confirmDeleteModule(module.public_id);
+                                      $event.stopPropagation()"
+                            />
+                          </div>
+                        </div>
+                      </p-accordion-header>
+
+                      <p-accordion-content>
+                        <div class="p-3">
+                          @for (classe of module.lessons; track classe.public_id) {
+                            <div class="flex justify-content-between align-items-center p-2 border-bottom-1 border-gray-200">
+                              <span><i class="pi pi-video mr-2"></i>{{ classe.title }}</span>
+                              <div>
+                                <p-button icon="pi pi-pencil"
+                                          styleClass="p-button-text p-button-sm"
+                                          (click)="editClasse(classe)" />
+                                <p-button icon="pi pi-trash"
+                                          styleClass="p-button-text p-button-sm p-button-danger"
+                                          (click)="confirmDeleteClasse(classe.public_id)" />
+                              </div>
+                            </div>
+                          } @empty {
+                            <p class="text-center text-gray-500 p-3">Nenhuma aula neste módulo.</p>
+                          }
+                          <p-button label="Adicionar Aula" icon="pi pi-plus"
+                                    styleClass="p-button-text mt-3" (click)="showAddClasseModal(module)" />
+                        </div>
+                      </p-accordion-content>
+                    </p-accordion-panel>
+                }
+              } @else {
+                <p class="text-center text-gray-500 p-4">Nenhum módulo criado ainda. Comece adicionando um!</p>
+              }
+            </p-accordion>
+          }
+        </p-tabPanel>
+
+        <p-tabPanel header="Alunos Inscritos">
+          @if (courseData.status === 'Aprovado') {
+            @if (courseData.students) {
+              <p-table [value]="(courseData.students)" [rows]="10" [paginator]="true">
+                <ng-template pTemplate="header">
+                  <tr><th>Nome do Aluno</th><th>Email</th><th>Data de Inscrição</th></tr>
+                </ng-template>
+                <ng-template pTemplate="body" let-student>
+                  <tr><td>{{ student.name }}</td><td>{{ student.email }}</td><td>{{ student.enrolled_at }}</td></tr>
+                </ng-template>
+              </p-table>
+            }
+          } @else {
+            <div class="text-center p-5 surface-100 rounded-md">
+              <i class="pi pi-lock text-3xl text-gray-400"></i>
+              <p class="mt-2 text-white">Os alunos poderão se inscrever assim que o curso for aprovado.</p>
+            </div>
+          }
+        </p-tabPanel>
+      }
+
+      <p-tabPanel header="Danger zone">
+        <ng-template pTemplate="header">
+          <tr><th>Ação</th><th>
+        </ng-template>
+        <ng-template pTemplate="body" >
+          <tr>
+            <td>
+              <p-button label="Encerrar curso"
+                        severity="danger"
+                        icon="pi pi-times"
+              (click)="confirmDeleteCourse()"/>
+            </td>
+          </tr>
+        </ng-template>
+      </p-tabPanel>
+    </p-tabView>
+
+  </div>
+</div>
+@if(courseData) {
+  <app-module-form
+    [displayModal]="displayModuleModal"
+    [courseId]="courseData.public_id"
+    [nextOrderNumber]="courseData.modules.length + 1"
+    (onHideModal)="hideModuleModal()"
+    (onSaveModule)="handleSaveModule($event)">
+  </app-module-form>
+}
+@if(displayClasseModal && selectedModuleId) {
+  <app-classe-form
+    [displayModal]="displayClasseModal"
+    [moduleId]="selectedModuleId"
+    [nextLessonOrder]="nextClasseOrder"
+    [isLoading]="isSavingLesson"
+    (onHideModal)="hideClasseModal()"
+    (onSaveLesson)="handleSaveClasse($event)">
+  </app-classe-form>
+}
+
+
