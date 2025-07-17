@@ -1,59 +1,87 @@
-# LumenIF
+# LumenIF Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 20.0.2.
+Este é o frontend do projeto LumenIF, desenvolvido com Angular, utilizando a biblioteca de componentes PrimeNG e consumindo uma API backend em Laravel.
 
-## Development server
+## Sobre o Projeto
 
-To start a local development server, run:
+O LumenIF é uma plataforma de cursos online, onde os usuários podem se inscrever, acessar cursos e os administradores podem gerenciar o conteúdo e os usuários.
 
-```bash
-ng serve
+Projeto desenvolvido para a matéria de Desenvolvimento Web II, do curso de TADS.
+
+
+## Tecnologias Utilizadas
+
+*   **Angular**: Framework para desenvolvimento de aplicações web.
+*   **PrimeNG**: Biblioteca de componentes UI para Angular.
+*   **TypeScript**: Superset do JavaScript que adiciona tipagem estática.
+
+## Pré-requisitos
+
+Antes de começar, você precisará ter as seguintes ferramentas instaladas em sua máquina:
+
+*   [Node.js](https://nodejs.org/en/) (versão 18 ou superior)
+*   [Angular CLI](https://angular.io/cli) (versão 18 ou superior)
+
+## Como Executar o Projeto
+
+1.  **Clone o repositório:**
+
+    ```bash
+    git clone <url-do-repositorio>
+    ```
+
+2.  **Acesse o diretório do projeto:**
+
+    ```bash
+    cd lumenif-frontend
+    ```
+
+3.  **Instale as dependências:**
+
+    ```bash
+    npm install
+    ```
+
+4.  **Execute a aplicação:**
+
+    ```bash
+    ng serve
+    ```
+
+A aplicação estará disponível em `http://localhost:4200/`.
+
+## Estrutura do Projeto
+
+A estrutura de pastas do projeto segue o padrão do Angular CLI:
+
+```
+/src
+|-- /app
+|   |-- /components (Componentes reutilizáveis)
+|   |-- /guards (Guards de rota)
+|   |-- /interceptors (Interceptors HTTP)
+|   |-- /interfaces (Interfaces de dados)
+|   |-- /pages (Páginas da aplicação)
+|   |-- /services (Serviços de dados)
+|-- /assets (Arquivos estáticos)
+|-- /environments (Configurações de ambiente)
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
+## Scripts Disponíveis
 
-## Code scaffolding
+No arquivo `package.json`, os seguintes scripts estão disponíveis:
 
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
+*   `ng serve`: Executa a aplicação em modo de desenvolvimento.
+*   `ng build`: Compila a aplicação para produção.
+*   `ng test`: Executa os testes unitários.
+*   `ng watch`: Compila a aplicação em modo de desenvolvimento e observa as alterações nos arquivos.
 
-```bash
-ng generate component component-name
-```
+## Consumo da API
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
+A aplicação consome uma API que deve estar em execução. A URL da API é configurada no arquivo `src/environments/environment.ts`.
 
-```bash
-ng generate --help
-```
+**URL da API em desenvolvimento:**
 
-## Building
+`http://127.0.0.1:8000/api`
 
-To build the project run:
-
-```bash
-ng build
-```
-
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
-```
-
-## Running end-to-end tests
-
-For end-to-end (e2e) testing, run:
-
-```bash
-ng e2e
-```
-
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
-
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+Certifique-se de que o backend esteja rodando nesta URL para que o frontend funcione corretamente.
