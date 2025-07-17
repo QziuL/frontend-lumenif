@@ -1,0 +1,25 @@
+<nav class="flex align-items-center justify-content-between px-4 sm:px-6 lg:px-8 py-3 shadow-md">
+  <a routerLink="/home" class="flex align-items-center cursor-pointer">
+    <h1 class="text-2xl font-bold text-primary">LumenIF</h1>
+  </a>
+
+  <div>
+    @if (!isLoggedIn) {
+      <a routerLink="/login">
+        <p-button label="Login" styleClass="p-button-text p-button-primary" />
+      </a>
+      <a routerLink="/register">
+        <p-button label="Cadastre-se" styleClass="ml-2" />
+      </a>
+    }
+
+    @if (isLoggedIn && user) {
+      <div class="flex align-items-center gap-3">
+        <span class="font-semibold text-color-secondary">Olá, {{ user.name }}</span>
+        <p-menu #menu [model]="userMenuItems" [popup]="true" />
+        <p-button icon="pi pi-user" styleClass="p-button-rounded p-button-text" (click)="menu.toggle($event)" />
+        <p-button icon="pi pi-moon" (onClick)="toggleDarkMode()"/>
+      </div>
+    }
+  </div>
+</nav>
